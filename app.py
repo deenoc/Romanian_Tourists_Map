@@ -8,10 +8,34 @@ st.title("🗺️ Romanian Tourist Attractions Map")
 
 # Hardcoded data (from Colab)
 locations = [
-    {"name": "Bran Castle", "lat": 45.5156, "lon": 25.3672, "region": "Brașov", "description": "Dracula's Castle"},
-    {"name": "Peleș Castle", "lat": 45.3592, "lon": 25.5424, "region": "Prahova", "description": "Neo-Renaissance beauty"},
-    {"name": "Merry Cemetery", "lat": 47.9736, "lon": 23.6952, "region": "Maramureș", "description": "Colorful tombstones with funny epitaphs"},
-    {"name": "Corvin Castle", "lat": 45.7489, "lon": 22.8886, "region": "Hunedoara", "description": "One of the largest castles in Europe"},
+    {
+        "name": "Bran Castle",
+        "lat": 45.5156,
+        "lon": 25.3672,
+        "region": "Brașov",
+        "description": "Commonly known as Dracula's Castle."
+    },
+    {
+        "name": "Peleș Castle",
+        "lat": 45.3592,
+        "lon": 25.5424,
+        "region": "Prahova",
+        "description": "A Neo-Renaissance castle in the Carpathian Mountains."
+    },
+    {
+        "name": "Merry Cemetery",
+        "lat": 47.9736,
+        "lon": 23.6952,
+        "region": "Maramureș",
+        "description": "Famous for colorful tombstones with poetic epitaphs."
+    },
+    {
+        "name": "Corvin Castle",
+        "lat": 45.7489,
+        "lon": 22.8886,
+        "region": "Hunedoara",
+        "description": "One of the largest castles in Europe, Gothic-Renaissance style."
+    }
 ]
 
 # Sidebar region filter
