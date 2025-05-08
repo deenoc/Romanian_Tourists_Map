@@ -2,10 +2,11 @@ import streamlit as st
 import folium
 from streamlit_folium import folium_static
 
+# Page config and title
 st.set_page_config(page_title="Romanian Tourist Cities Map", layout="wide")
 st.title("🇷🇴 Romanian Tourist Cities Map")
 
-# List of 20 cities with rank and visitors
+# City data
 locations = [
     {"name": "Bucharest", "lat": 44.4268, "lon": 26.1025, "rank": 1, "visitors": 2000000},
     {"name": "Brașov", "lat": 45.6579, "lon": 25.6012, "rank": 2, "visitors": 1500000},
@@ -29,10 +30,7 @@ locations = [
     {"name": "Tulcea", "lat": 45.1716, "lon": 28.7918, "rank": 20, "visitors": 200000},
 ]
 
-# Map setup
-m = folium.Map(location=[45.9432, 24.9668], zoom_start=6)
-
-# Color mapping based on rank
+# Define marker color by rank
 def get_marker_color(rank):
     if rank <= 5:
         return "red"
@@ -43,7 +41,9 @@ def get_marker_color(rank):
     else:
         return "green"
 
-# Add markers with color-coded icons
+# Create folium map
+m = folium.Map(location=[45.9432, 24.9668], zoom_start=6)
+
 for loc in locations:
     folium.Marker(
         location=[loc["lat"], loc["lon"]],
@@ -52,23 +52,23 @@ for loc in locations:
         icon=folium.Icon(color=get_marker_color(loc["rank"]), icon="info-sign")
     ).add_to(m)
 
-# Add custom legend to bottom right
-legend_html = """
-<div style="
-    position: fixed; 
-    bottom: 50px; right: 50px; width: 160px; height: 120px; 
-    background-color: white; z-index:9999; font-size:14px;
-    border:2px solid gray; border-radius:8px; padding: 10px;
-    box-shadow: 2px 2px 5px rgba(0,0,0,0.3);">
-<b>City Rank Legend</b><br>
-<i style='color:red;' class='fa fa-map-marker'></i> Rank 1–5<br>
-<i style='color:blue;' class='fa fa-map-marker'></i> Rank 6–10<br>
-<i style='color:purple;' class='fa fa-map-marker'></i> Rank 11–15<br>
-<i style='color:green;' class='fa fa-map-marker'></i> Rank 16–20
-</div>
-"""
+# Layout: map on the left, legend on the right
+col1, col2 = st.columns([4, 1])
 
-m.get_root().html.add_child(folium.Element(legend_html))
+with col1:
+    folium_static(m, width=1000, height=600)
 
-# Show map in Streamlit
-folium_static(m, width=1150, height=600)
+with col2:
+    st.markdown("### 🗺️ Legend")
+    st.markdown("""
+    <div style="line-height: 1.6; font-size: 16px;">
+        <span style='color:red;'>🔴</span> <b>Rank 1–5</b><br>
+        <span style='color:blue;'>🔵</span> <b>Rank 6–10</b><br>
+        <span style='color:purple;'>🟣</span> <b>Rank 11–15</b><br>
+        <span style='color:green;'>🟢</span> <b>Rank 16–20</b>
+    </div>
+    """, unsafe_allow_html=True)
+
+# Optional: expandable data table
+with st.expander("Show raw data"):
+    st.write(locations)
