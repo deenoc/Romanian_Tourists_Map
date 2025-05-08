@@ -2,11 +2,11 @@ import streamlit as st
 import folium
 from streamlit_folium import folium_static
 from folium.plugins import HeatMap
-from folium import IFrame
 
 st.set_page_config(page_title="Romanian Tourist Cities Map", layout="wide")
 st.title("🇷🇴 Romanian Tourist Cities Map")
 
+# List of 20 cities with images for top 5
 locations = [
     {"name": "Bucharest", "lat": 44.4268, "lon": 26.1025, "rank": 1, "visitors": 2000000,
      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Palatul_Parlamentului_Bucuresti.jpg/320px-Palatul_Parlamentului_Bucuresti.jpg"},
@@ -35,6 +35,7 @@ locations = [
     {"name": "Tulcea", "lat": 45.1716, "lon": 28.7918, "rank": 20, "visitors": 200000},
 ]
 
+# Color function
 def get_marker_color(rank):
     if rank <= 5:
         return "red"
@@ -45,55 +46,39 @@ def get_marker_color(rank):
     else:
         return "green"
 
-# Create the map
+# City selector
+city_names = [loc["name"] for loc in locations]
+selected_city = st.sidebar.selectbox("📍 Select a city", city_names)
+selected_info = next(loc for loc in locations if loc["name"] == selected_city)
+
+# Display info panel
+st.sidebar.markdown(f"### {selected_info['name']}")
+st.sidebar.markdown(f"**Rank**: {selected_info['rank']}")
+st.sidebar.markdown(f"**Visitors**: {selected_info['visitors']:,}")
+if "image_url" in selected_info:
+    st.sidebar.image(selected_info["image_url"], use_column_width=True)
+
+# Map creation
 m = folium.Map(location=[45.9432, 24.9668], zoom_start=6)
 marker_group = folium.FeatureGroup(name="City Markers", show=True).add_to(m)
 
-# Add markers with IFrame image support
+# Add markers with tooltip only (no popup)
 for loc in locations:
-    html = f"""
-    <div style="width:200px">
-        <b>{loc['name']}</b><br>
-        Rank: {loc['rank']}<br>
-        Visitors: {loc['visitors']:,}<br>
-    """
-    if "image_url" in loc:
-        html += f'<img src="{loc["image_url"]}" width="180"><br>'
-    html += "</div>"
-
-    iframe = IFrame(html=html, width=220, height=240)
-    popup = folium.Popup(iframe, max_width=240)
-
     folium.Marker(
         location=[loc["lat"], loc["lon"]],
-        popup=popup,
         tooltip=loc["name"],
         icon=folium.Icon(color=get_marker_color(loc["rank"]), icon="info-sign")
     ).add_to(marker_group)
 
-# Add Heatmap
+# Heatmap
 heat_data = [[loc["lat"], loc["lon"], loc["visitors"]] for loc in locations]
 HeatMap(heat_data, name="Tourist Heatmap", radius=25, blur=15, max_zoom=6).add_to(m)
 
-# Add LayerControl
 folium.LayerControl(collapsed=False).add_to(m)
 
-# Streamlit layout
-col1, col2 = st.columns([4, 1])
-with col1:
-    folium_static(m, width=1000, height=650)
+# Display map full-width on mobile
+st.markdown("### 🗺️ Interactive Map")
+folium_static(m, width=1100, height=600)
 
-with col2:
-    st.markdown("### 🗺️ Legend")
-    st.markdown("""
-    <div style="line-height: 1.6; font-size: 16px;">
-        <span style='color:red;'>🔴</span> <b>Rank 1–5</b><br>
-        <span style='color:blue;'>🔵</span> <b>Rank 6–10</b><br>
-        <span style='color:purple;'>🟣</span> <b>Rank 11–15</b><br>
-        <span style='color:green;'>🟢</span> <b>Rank 16–20</b><br><br>
-        <b>🔥 Heatmap</b> shows visitor density
-    </div>
-    """, unsafe_allow_html=True)
-
-with st.expander("Show city data"):
+with st.expander("📊 View city data table"):
     st.write(locations)
