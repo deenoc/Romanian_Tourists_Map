@@ -43,7 +43,7 @@ m = folium.Map(location=[45.9432, 24.9668], zoom_start=6)
 for loc in filtered:
     folium.Marker(
         location=[loc["lat"], loc["lon"]],
-        popup=f"<b>{loc['name']}</b><br>{loc['description']}",
+        popup=f"<b>{loc['name']}</b><br>Rank: {loc['rank']}<br>Visitors: {loc['visitors']:,}",
         tooltip=loc["name"],
         icon=folium.Icon(color="green", icon="info-sign")
     ).add_to(m)
