@@ -50,12 +50,10 @@ city_names = [loc["name"] for loc in locations]
 selected_city = st.sidebar.selectbox("📍 Select a city", city_names)
 selected_info = next(loc for loc in locations if loc["name"] == selected_city)
 
-# Display city info
+# Display city info (no image in sidebar)
 st.sidebar.markdown(f"### {selected_info['name']}")
 st.sidebar.markdown(f"**Rank**: {selected_info['rank']}")
 st.sidebar.markdown(f"**Visitors**: {selected_info['visitors']:,}")
-if "image_url" in selected_info:
-    st.sidebar.image(selected_info["image_url"], use_container_width=True)
 
 # Map
 m = folium.Map(location=[45.9432, 24.9668], zoom_start=6)
@@ -70,14 +68,20 @@ for loc in locations:
 
 heat_data = [[loc["lat"], loc["lon"], loc["visitors"]] for loc in locations]
 HeatMap(heat_data, name="Tourist Heatmap", radius=25, blur=15, max_zoom=6).add_to(m)
-
 folium.LayerControl(collapsed=False).add_to(m)
 
-# Map section
+# Main map section
 st.markdown("### 🗺️ Interactive Map")
 folium_static(m, width=1100, height=600)
 
-# Legend section
+# City image and stats below map
+st.markdown("---")
+st.markdown(f"### 📸 {selected_info['name']} – Tourist Snapshot")
+st.markdown(f"**Rank**: {selected_info['rank']} &nbsp;&nbsp;|&nbsp;&nbsp; **Visitors**: {selected_info['visitors']:,}")
+if "image_url" in selected_info:
+    st.image(selected_info["image_url"], use_container_width=True)
+
+# Legend
 st.markdown("---")
 st.markdown("### 🗺️ Legend")
 st.markdown("""
@@ -90,6 +94,6 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# Expandable raw data
+# Raw data table
 with st.expander("📊 View city data table"):
     st.write(locations)
