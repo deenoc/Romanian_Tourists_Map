@@ -31,11 +31,12 @@ locations = [
 ]
 
 # Sidebar region filter
-regions = list(set(loc["region"] for loc in locations))
-selected_regions = st.sidebar.multiselect("Filter by Region", regions, default=regions)
+#regions = list(set(loc["region"] for loc in locations))
+#selected_regions = st.sidebar.multiselect("Filter by Region", regions, default=regions)
 
 # Filtered locations
-filtered = [loc for loc in locations if loc["region"] in selected_regions]
+#filtered = [loc for loc in locations if loc["region"] in selected_regions]
+filtered = locations
 
 # Create map
 m = folium.Map(location=[45.9432, 24.9668], zoom_start=6)
