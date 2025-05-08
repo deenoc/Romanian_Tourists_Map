@@ -2,11 +2,11 @@ import streamlit as st
 import folium
 from streamlit_folium import folium_static
 from folium.plugins import HeatMap
+from folium import IFrame
 
 st.set_page_config(page_title="Romanian Tourist Cities Map", layout="wide")
 st.title("🇷🇴 Romanian Tourist Cities Map")
 
-# All 20 cities with image URLs for top 5
 locations = [
     {"name": "Bucharest", "lat": 44.4268, "lon": 26.1025, "rank": 1, "visitors": 2000000,
      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Palatul_Parlamentului_Bucuresti.jpg/320px-Palatul_Parlamentului_Bucuresti.jpg"},
@@ -35,7 +35,6 @@ locations = [
     {"name": "Tulcea", "lat": 45.1716, "lon": 28.7918, "rank": 20, "visitors": 200000},
 ]
 
-# Color coding by rank
 def get_marker_color(rank):
     if rank <= 5:
         return "red"
@@ -46,34 +45,37 @@ def get_marker_color(rank):
     else:
         return "green"
 
-# Create map
+# Create the map
 m = folium.Map(location=[45.9432, 24.9668], zoom_start=6)
 marker_group = folium.FeatureGroup(name="City Markers", show=True).add_to(m)
 
-# Add markers
+# Add markers with IFrame image support
 for loc in locations:
-    popup_content = f"""
+    html = f"""
     <div style="width:200px">
         <b>{loc['name']}</b><br>
         Rank: {loc['rank']}<br>
         Visitors: {loc['visitors']:,}<br>
     """
     if "image_url" in loc:
-        popup_content += f'<img src="{loc["image_url"]}" width="180"><br>'
-    popup_content += "</div>"
+        html += f'<img src="{loc["image_url"]}" width="180"><br>'
+    html += "</div>"
+
+    iframe = IFrame(html=html, width=220, height=240)
+    popup = folium.Popup(iframe, max_width=240)
 
     folium.Marker(
         location=[loc["lat"], loc["lon"]],
-        popup=folium.Popup(popup_content, max_width=250),
+        popup=popup,
         tooltip=loc["name"],
         icon=folium.Icon(color=get_marker_color(loc["rank"]), icon="info-sign")
     ).add_to(marker_group)
 
-# Heatmap
+# Add Heatmap
 heat_data = [[loc["lat"], loc["lon"], loc["visitors"]] for loc in locations]
 HeatMap(heat_data, name="Tourist Heatmap", radius=25, blur=15, max_zoom=6).add_to(m)
 
-# Layer controls
+# Add LayerControl
 folium.LayerControl(collapsed=False).add_to(m)
 
 # Streamlit layout
@@ -93,6 +95,5 @@ with col2:
     </div>
     """, unsafe_allow_html=True)
 
-# Optional data table
 with st.expander("Show city data"):
     st.write(locations)
