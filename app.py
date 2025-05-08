@@ -69,11 +69,6 @@ for loc in locations:
         icon=folium.Icon(color=get_marker_color(loc["rank"]), icon="info-sign")
     ).add_to(marker_group)
 
-# Top 5 tourist route
-top5 = sorted(locations, key=lambda x: x["rank"])[:5]
-route_coords = [[city["lat"], city["lon"]] for city in top5]
-folium.PolyLine(route_coords, color="orange", weight=4, tooltip="Top 5 Tourist Trail").add_to(m)
-
 # Heatmap
 heat_data = [[loc["lat"], loc["lon"], loc["visitors"]] for loc in locations]
 HeatMap(heat_data, name="Tourist Heatmap", radius=25, blur=15, max_zoom=6).add_to(m)
@@ -94,11 +89,10 @@ with col2:
         <span style='color:blue;'>🔵</span> <b>Rank 6–10</b><br>
         <span style='color:purple;'>🟣</span> <b>Rank 11–15</b><br>
         <span style='color:green;'>🟢</span> <b>Rank 16–20</b><br><br>
-        <span style='color:orange;'>➖</span> <b>Top 5 Tourist Trail</b><br>
         <b>🔥 Heatmap</b> shows visitor density
     </div>
     """, unsafe_allow_html=True)
 
-# Optional data display
+# Optional data table
 with st.expander("Show city data"):
     st.write(locations)
