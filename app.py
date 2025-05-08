@@ -9,7 +9,7 @@ st.title("🇷🇴 Romanian Tourist Cities Map")
 # City data
 locations = [
     {"name": "Bucharest", "lat": 44.4268, "lon": 26.1025, "rank": 1, "visitors": 2000000,
-     "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Palatul_Parlamentului_Bucuresti.jpg/320px-Palatul_Parlamentului_Bucuresti.jpg"},
+     "image_url": "https://images.unsplash.com/photo-1583771797879-7e67c04fbd10?auto=format&fit=crop&w=600&q=80"},
     {"name": "Brașov", "lat": 45.6579, "lon": 25.6012, "rank": 2, "visitors": 1500000,
      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Brasov_-_panoramio_%283%29.jpg/320px-Brasov_-_panoramio_%283%29.jpg"},
     {"name": "Constanța", "lat": 44.1733, "lon": 28.6383, "rank": 3, "visitors": 1200000,
