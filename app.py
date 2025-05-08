@@ -1,43 +1,39 @@
 import streamlit as st
-import pandas as pd
 import folium
 from streamlit_folium import folium_static
 
-# Set page config
+# Set Streamlit config
 st.set_page_config(page_title="Romanian Tourist Map", layout="wide")
-
-# Title
 st.title("🗺️ Romanian Tourist Attractions Map")
 
-# Load data
-@st.cache_data
-def load_data():
-    return pd.read_csv("romania_attractions.csv")
+# Hardcoded data (from Colab)
+locations = [
+    {"name": "Bran Castle", "lat": 45.5156, "lon": 25.3672, "region": "Brașov", "description": "Dracula's Castle"},
+    {"name": "Peleș Castle", "lat": 45.3592, "lon": 25.5424, "region": "Prahova", "description": "Neo-Renaissance beauty"},
+    {"name": "Merry Cemetery", "lat": 47.9736, "lon": 23.6952, "region": "Maramureș", "description": "Colorful tombstones with funny epitaphs"},
+    {"name": "Corvin Castle", "lat": 45.7489, "lon": 22.8886, "region": "Hunedoara", "description": "One of the largest castles in Europe"},
+]
 
-df = load_data()
+# Sidebar region filter
+regions = list(set(loc["region"] for loc in locations))
+selected_regions = st.sidebar.multiselect("Filter by Region", regions, default=regions)
 
-# Sidebar filters (optional)
-st.sidebar.header("Filter Options")
-regions = st.sidebar.multiselect("Select Region(s)", df['region'].unique(), default=df['region'].unique())
+# Filtered locations
+filtered = [loc for loc in locations if loc["region"] in selected_regions]
 
-# Filtered DataFrame
-filtered_df = df[df['region'].isin(regions)]
-
-# Map setup
+# Create map
 m = folium.Map(location=[45.9432, 24.9668], zoom_start=6)
-
-# Add markers
-for _, row in filtered_df.iterrows():
+for loc in filtered:
     folium.Marker(
-        location=[row['latitude'], row['longitude']],
-        popup=f"<b>{row['name']}</b><br>{row['description']}",
-        tooltip=row['name'],
+        location=[loc["lat"], loc["lon"]],
+        popup=f"<b>{loc['name']}</b><br>{loc['description']}",
+        tooltip=loc["name"],
         icon=folium.Icon(color="green", icon="info-sign")
     ).add_to(m)
 
 # Show map
 folium_static(m, width=1200, height=600)
 
-# Optional: Show data table
-with st.expander("See the full dataset"):
-    st.dataframe(filtered_df)
+# Optional: Show raw data
+with st.expander("Show Data"):
+    st.write(filtered)
